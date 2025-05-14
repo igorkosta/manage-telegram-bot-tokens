@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif;}
+body, html {
+  height: 100%;
+  color: #777;
+  line-height: 1.8;
+}
+
+/* Create a Parallax Effect */
+.bgimg-1, .bgimg-2, .bgimg-3 {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+/* First image (Logo. Full height) */
+.bgimg-1 {
+  background-image: url('./durov.webp');
+  min-height: 100% !important;
+}
+
+/* Second image (Portfolio) */
+.bgimg-2 {
+  background-image: url("/w3images/parallax2.jpg");
+  min-height: 400px;
+}
+
+/* Third image (Contact) */
+.bgimg-3 {
+  background-image: url("/w3images/parallax3.jpg");
+  min-height: 400px;
+}
+
+.w3-wide {letter-spacing: 10px;}
+.w3-hover-opacity {cursor: pointer;}
+.w3-padding-large {
+  padding: 25px !important;
+  margin: 35px 0;
+}
+.w3-input {
+  margin: 10px 0;
+  padding: 20px 10px;
+  font-size: 20px;
+}
+/* Turn off parallax scrolling for tablets and phones */
+@media only screen and (max-device-width: 1600px) {
+  .bgimg-1, .bgimg-2, .bgimg-3 {
+    background-attachment: scroll;
+    min-height: 400px;
+  }
+}
+</style>
+</head>
+<body>
+<script>
+  async function manageWebhook(action) {
+    const botToken = document.getElementById('bot-token').value;
+    const webhookUrl = document.getElementById('webhook-url').value;
+
+    console.log(`${botToken}, ${webhookUrl}`)
+    if (action === 'delete' && botToken) {
+      return await callTG(botToken);
+    }
+    if (action === 'add' && botToken && webhookUrl) {
+      return await callTG(botToken, webhookUrl);
+    }
+
+    alert(`Fill the form!`)
+    return;
+  }
+
+  async function callTG (botToken, webhookUrl = '') {
+    try {
+      const response = await fetch(`https://api.telegram.org/bot${botToken}/setWebhook`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: `url=${webhookUrl}`
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        console.log(`Response: `, response)
+        alert(json.description)
+      }
+      console.log(json);
+      alert(json.description)
+    } catch(error) {
+      alert(error.message)
+    }
+
+  }
+</script>
+<div class="bgimg-1 w3-display-container w3-opacity-min" id="home">
+  <div class="w3-display-middle" style="white-space:nowrap;">
+    <div class="w3-center w3-padding-large w3-black w3-xlarge w3-wide w3-animate-opacity">Set up your telegram bot webhook</div>
+    <form onsubmit="event.preventDefault();">
+      <input
+        id="bot-token"
+        class="w3-input w3-border"
+        type="text"
+        placeholder="BOT TOKEN"
+        required
+        name="bot-token" />
+      <input
+        id="webhook-url"
+        class="w3-input w3-border"
+        type="url"
+        pattern="https://.*"
+        placeholder="Webhook URL"
+        required
+        name="webhook-url" />
+      <button onClick="manageWebhook('add')" class="w3-button w3-blue w3-right w3-section">
+        <i class="fa fa-paper-plane"></i> REGISTER WEBHOOK
+      </button>
+      <button onClick="manageWebhook('delete')" class="w3-button w3-red w3-left w3-section">
+        <i class="fa fa-trash"></i> DELETE WEBHOOK
+      </button>
+    </form>
+  </div>
+</div>
